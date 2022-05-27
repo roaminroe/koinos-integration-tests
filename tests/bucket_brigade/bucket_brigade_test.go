@@ -41,7 +41,7 @@ func TestBucketBrigade(t *testing.T) {
 
 	t.Logf("Starting test...")
 
-	test_timer := time.NewTimer(120 * time.Second)
+	test_timer := time.NewTimer(1200 * time.Second)
 	go func() {
 		<-test_timer.C
 		panic("Timer expired")
@@ -63,7 +63,7 @@ func TestBucketBrigade(t *testing.T) {
 
 			t.Logf("Producer Height %d", headInfoResponse.HeadTopology.Height)
 
-			if headInfoResponse.HeadTopology.Height > 5 {
+			if headInfoResponse.HeadTopology.Height > 500 {
 				break
 			}
 		}
