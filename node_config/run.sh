@@ -14,5 +14,6 @@ mkdir -p /koinos/jsonrpc/descriptors
 pushd /koinos/jsonrpc/descriptors
 
 wget https://github.com/koinos/koinos-proto-descriptors/raw/master/koinos_descriptors.pb
+wget https://github.com/roaminroe/koinos-bridge-validator/raw/master/proto/build/bridge_descriptors.pb
 
 popd

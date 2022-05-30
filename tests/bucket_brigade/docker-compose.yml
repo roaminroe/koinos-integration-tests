@@ -7,14 +7,14 @@ networks:
     name: bucket1
   bucket2:
     name: bucket2
-  bucket3:
-    name: bucket3
+  # bucket3:
+  #   name: bucket3
 
 volumes:
   producer_volume:
   bucket1_volume:
   bucket2_volume:
-  bucket3_volume:
+  # bucket3_volume:
 
 services:
   #producer
@@ -129,6 +129,19 @@ services:
       - bucket1_config
     command: -a amqp://guest:guest@amqp_bucket1:5672/
 
+  jsonrpc_bucket1:
+    image: koinos/koinos-jsonrpc:${JSONRPC_TAG:-latest}
+    networks:
+      - bucket1
+    ports:
+      - "8081:8080"
+    volumes:
+      - bucket1_volume:/root/.koinos
+    depends_on:
+      - amqp_bucket1
+      - bucket1_config
+    command: -a amqp://guest:guest@amqp_bucket1:5672/ -l /tcp/8080
+
   bridge_bucket1:
     image: roamin/koinos-bridge:${BRIDGE_TAG:-latest}
     networks:
@@ -138,7 +151,7 @@ services:
     depends_on:
       - amqp_bucket1
       - bucket1_config
-    command: -a amqp://guest:guest@amqp_bucket1:5672/ --eth-rpc http://host.docker.internal:8545/
+    command: -a amqp://guest:guest@amqp_bucket1:5672/ --eth-rpc http://host.docker.internal:8545/ --eth-contract 0x5FbDB2315678afecb367f032d93F642f64180aa3 --koinos-contract 1DQzuCcTKacbs9GGScRTU1Hc8BsyARTPqe --koinos-pk 5KaE1BafyKiYeVk5K1FCJkqcEKxBRJNe9VeWx7iKf6kLTtVAb3k --token-addresses 19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ:0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --validators 1Dd9qtqWTPGvhKRLhyDvPkNsGPK1qNz6Hk:abcd,1GWSnBFJB1fx2Qotb3nx9b2JL9TFB14e2P:efgh
 
   # QmcWYgujghF1oJhisxSTGYNjzPGVtejEL8XU41AqmEJsRB
   p2p_bucket1:
@@ -168,7 +181,7 @@ services:
     networks:
       - bucket2
     ports:
-      - "8081:8080"
+      - "8082:8080"
     volumes:
       - bucket2_volume:/root/.koinos
     depends_on:
@@ -203,17 +216,17 @@ services:
       - bucket2_config
     command: -a amqp://guest:guest@amqp_bucket2:5672/
 
-  # bridge_bucket2:
-  #  image: roamin/koinos-bridge:${BRIDGE_TAG:-latest}
-  #  networks:
-  #    - bucket2
-  #  volumes:
-  #    - bucket2_volume:/root/.koinos
-  #  depends_on:
-  #    - amqp_bucket2
-  #    - bucket2_config
-  #  command: -a amqp://guest:guest@amqp_bucket2:5672/ --eth-rpc none
-
+  bridge_bucket2:
+   image: roamin/koinos-bridge:${BRIDGE_TAG:-latest}
+   networks:
+     - bucket2
+   volumes:
+     - bucket2_volume:/root/.koinos
+   depends_on:
+     - amqp_bucket2
+     - bucket2_config
+   command: -a amqp://guest:guest@amqp_bucket2:5672/ --eth-rpc http://host.docker.internal:8545/ --eth-contract 0x5FbDB2315678afecb367f032d93F642f64180aa3 --koinos-contract 1DQzuCcTKacbs9GGScRTU1Hc8BsyARTPqe --koinos-pk 5JXt8qUawMPxakmzMfbByhgpTVe7cUAAY2NZUqkAt5oEkzDhz6M --token-addresses 19JntSm8pSNETT9aHTwAUHC5RMoaSmgZPJ:0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 --validators 1Dd9qtqWTPGvhKRLhyDvPkNsGPK1qNz6Hk:abcd,1GWSnBFJB1fx2Qotb3nx9b2JL9TFB14e2P:efgh
+  
   # QmZhp1J6JNzdGX1ZLTNd3EFU17iSEHrujViyVcW5NPjucZ
   p2p_bucket2:
     image: roamin/koinos-p2p:${P2P_TAG:-latest}
@@ -224,85 +237,83 @@ services:
     depends_on:
       - amqp_bucket2
       - p2p_bucket1
-    environment:
-      - IPFS_LOGGING=DEBUG
-    #command: -a amqp://guest:guest@amqp_bucket2:5672/ -s bucket2 -l /ip4/0.0.0.0/tcp/8888 -p /dns4/p2p_bucket1/tcp/8888/p2p/QmcWYgujghF1oJhisxSTGYNjzPGVtejEL8XU41AqmEJsRB --plugins bridge
-    command: -a amqp://guest:guest@amqp_bucket2:5672/ -s bucket2 -l /ip4/0.0.0.0/tcp/8888 -p /dns4/p2p_bucket1/tcp/8888/p2p/QmcWYgujghF1oJhisxSTGYNjzPGVtejEL8XU41AqmEJsRB
+    command: -a amqp://guest:guest@amqp_bucket2:5672/ -s bucket2 -l /ip4/0.0.0.0/tcp/8888 -p /dns4/p2p_bucket1/tcp/8888/p2p/QmcWYgujghF1oJhisxSTGYNjzPGVtejEL8XU41AqmEJsRB --plugins bridge
+    # command: -a amqp://guest:guest@amqp_bucket2:5672/ -s bucket2 -l /ip4/0.0.0.0/tcp/8888 -p /dns4/p2p_bucket1/tcp/8888/p2p/QmcWYgujghF1oJhisxSTGYNjzPGVtejEL8XU41AqmEJsRB
 
   #bucket3
-  amqp_bucket3:
-    image: rabbitmq:alpine
-    networks:
-      - bucket3
-    ports:
-      - "5672:5672"
+  # amqp_bucket3:
+  #   image: rabbitmq:alpine
+  #   networks:
+  #     - bucket3
+  #   ports:
+  #     - "5672:5672"
 
-  bucket3_config:
-    build:
-      context: ../../node_config
-    volumes:
-      - bucket3_volume:/koinos
+  # bucket3_config:
+  #   build:
+  #     context: ../../node_config
+  #   volumes:
+  #     - bucket3_volume:/koinos
 
-  jsonrpc_bucket3:
-    image: koinos/koinos-jsonrpc:${JSONRPC_TAG:-latest}
-    networks:
-      - bucket3
-    ports:
-      - "8082:8080"
-    volumes:
-      - bucket3_volume:/root/.koinos
-    depends_on:
-      - amqp_bucket3
-      - bucket3_config
-    command: -a amqp://guest:guest@amqp_bucket3:5672/ -l /tcp/8080
+  # jsonrpc_bucket3:
+  #   image: koinos/koinos-jsonrpc:${JSONRPC_TAG:-latest}
+  #   networks:
+  #     - bucket3
+  #   ports:
+  #     - "8082:8080"
+  #   volumes:
+  #     - bucket3_volume:/root/.koinos
+  #   depends_on:
+  #     - amqp_bucket3
+  #     - bucket3_config
+  #   command: -a amqp://guest:guest@amqp_bucket3:5672/ -l /tcp/8080
 
-  mempool_bucket3:
-    image: koinos/koinos-mempool:${MEMPOOL_TAG:-latest}
-    networks:
-      - bucket3
-    depends_on:
-      - amqp_bucket3
-    command: -a amqp://guest:guest@amqp_bucket3:5672/
+  # mempool_bucket3:
+  #   image: koinos/koinos-mempool:${MEMPOOL_TAG:-latest}
+  #   networks:
+  #     - bucket3
+  #   depends_on:
+  #     - amqp_bucket3
+  #   command: -a amqp://guest:guest@amqp_bucket3:5672/
 
-  block_store_bucket3:
-    image: koinos/koinos-block-store:${BLOCK_STORE_TAG:-latest}
-    networks:
-      - bucket3
-    depends_on:
-      - amqp_bucket3
-    command: -a amqp://guest:guest@amqp_bucket3:5672/
+  # block_store_bucket3:
+  #   image: koinos/koinos-block-store:${BLOCK_STORE_TAG:-latest}
+  #   networks:
+  #     - bucket3
+  #   depends_on:
+  #     - amqp_bucket3
+  #   command: -a amqp://guest:guest@amqp_bucket3:5672/
 
-  chain_bucket3:
-    image: koinos/koinos-chain:${CHAIN_TAG:-latest}
-    networks:
-      - bucket3
-    volumes:
-      - bucket3_volume:/root/.koinos
-    depends_on:
-      - amqp_bucket3
-      - bucket3_config
-    command: -a amqp://guest:guest@amqp_bucket3:5672/
+  # chain_bucket3:
+  #   image: koinos/koinos-chain:${CHAIN_TAG:-latest}
+  #   networks:
+  #     - bucket3
+  #   volumes:
+  #     - bucket3_volume:/root/.koinos
+  #   depends_on:
+  #     - amqp_bucket3
+  #     - bucket3_config
+  #   command: -a amqp://guest:guest@amqp_bucket3:5672/
 
-  bridge_bucket3:
-    image: roamin/koinos-bridge:${BRIDGE_TAG:-latest}
-    networks:
-      - bucket3
-    volumes:
-      - bucket3_volume:/root/.koinos
-    depends_on:
-      - amqp_bucket3
-      - bucket3_config
-    command: -a amqp://guest:guest@amqp_bucket3:5672/ --eth-rpc http://host.docker.internal:8545/
+  # bridge_bucket3:
+  #   image: roamin/koinos-bridge:${BRIDGE_TAG:-latest}
+  #   networks:
+  #     - bucket3
+  #   volumes:
+  #     - bucket3_volume:/root/.koinos
+  #   depends_on:
+  #     - amqp_bucket3
+  #     - bucket3_config
+  #   command: -a amqp://guest:guest@amqp_bucket3:5672/ --eth-rpc http://host.docker.internal:8545/
 
-  # QmQ7DAH4F3hatvjTSs9uEN1PqReWgCPPQF67sP95DRoNjW
-  p2p_bucket3:
-    image: roamin/koinos-p2p:${P2P_TAG:-latest}
-    networks:
-      - p2p
-      - bucket3
-    depends_on:
-      - amqp_bucket3
-      - p2p_bucket2
-    environment:
-      - IPFS_LOGGING=DEBUG
-    command: -a amqp://guest:guest@amqp_bucket3:5672/ -s bucket3 -l /ip4/0.0.0.0/tcp/8888 -p /dns4/p2p_bucket2/tcp/8888/p2p/QmZhp1J6JNzdGX1ZLTNd3EFU17iSEHrujViyVcW5NPjucZ --plugins bridge
+  # # QmQ7DAH4F3hatvjTSs9uEN1PqReWgCPPQF67sP95DRoNjW
+  # p2p_bucket3:
+  #   image: roamin/koinos-p2p:${P2P_TAG:-latest}
+  #   networks:
+  #     - p2p
+  #     - bucket3
+  #   depends_on:
+  #     - amqp_bucket3
+  #     - p2p_bucket2
+  #   environment:
+  #     - IPFS_LOGGING=DEBUG
+  #   command: -a amqp://guest:guest@amqp_bucket3:5672/ -s bucket3 -l /ip4/0.0.0.0/tcp/8888 -p /dns4/p2p_bucket2/tcp/8888/p2p/QmZhp1J6JNzdGX1ZLTNd3EFU17iSEHrujViyVcW5NPjucZ --plugins bridge

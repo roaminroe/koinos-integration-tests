@@ -17,6 +17,8 @@ func TestBucketBrigade(t *testing.T) {
 	producerClient := jsonrpc.NewClient("http://localhost:8080/")
 	endClient := jsonrpc.NewClient("http://localhost:8082/")
 
+	t.Logf("Waiting for chain to start...")
+
 	headInfoResponse := chain.GetHeadInfoResponse{}
 
 	for {

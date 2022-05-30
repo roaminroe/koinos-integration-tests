@@ -6,8 +6,6 @@ require (
 	github.com/btcsuite/btcd v0.20.1-beta
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/koinos/koinos-mq-golang v0.0.0-20220319044422-57bccec4eb07
-	github.com/koinos/koinos-proto-golang v0.3.1-0.20220404211729-f0b34183b37c
-	github.com/koinos/koinos-util-golang v0.0.0-20220406201011-5df580ccdd47
 	github.com/mr-tron/base58 v1.2.0
 	github.com/multiformats/go-multihash v0.1.0
 	github.com/stretchr/testify v1.7.1
@@ -20,6 +18,8 @@ require (
 	github.com/ethereum/go-ethereum v1.10.9 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/koinos/koinos-log-golang v0.0.0-20210413225320-69e5d4a4c6c2 // indirect
+	github.com/koinos/koinos-proto-golang v0.3.1-0.20220502210140-7a042c27e7ce // indirect
+	github.com/koinos/koinos-util-golang v0.0.0-20220406201011-5df580ccdd47 // indirect
 	github.com/minio/blake2b-simd v0.0.0-20160723061019-3f5f724cb5b1 // indirect
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/multiformats/go-varint v0.0.6 // indirect
